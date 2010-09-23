@@ -713,6 +713,10 @@
                 },
                 destroy: function ()
                 {
+                        // Remove bindings
+                        var $form = $(this.element).closest('form');
+                        $form.unbind('submit', this.autoSaveFunction)
+                             .unbind('reset', this.resetFunction);
                         $(this.element).remove();
                         $.removeData(this.original, 'wysiwyg');
                         $(this.original).show();
@@ -799,6 +803,17 @@
                         this.initialContent = $(element).val();
                         this.initFrame();
 
+                        this.autoSaveFunction = function ()
+                        {
+                                self.saveContent();
+                        };
+
+                        this.resetFunction = function()
+                        {
+                                self.setContent(self.initialContent);
+                                self.saveContent();
+                        }
+
                         if(this.options.resizeOptions && $.fn.resizable)
                         {
                                 this.element.resizable($.extend(true, {
@@ -810,17 +825,10 @@
 
                         if (this.options.autoSave)
                         {                            
-                                $form.submit(function ()
-                                {
-                                        self.saveContent();
-                                });
+                                $form.submit(self.autoSaveFunction);
                         }
 
-                        $form.bind('reset', function ()
-                        {
-                                self.setContent(self.initialContent);
-                                self.saveContent();
-                        });
+                        $form.bind('reset', self.resetFunction);
                 },
 
                 initFrame: function ()
