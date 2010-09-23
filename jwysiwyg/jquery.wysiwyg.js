@@ -79,7 +79,7 @@
 						return retValue;
                 }
 
-                if (!(this.data('wysiwyg') === null))
+                if (this.data('wysiwyg'))
                 {
                         return this;
                 }
