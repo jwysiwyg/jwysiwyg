@@ -930,7 +930,8 @@
                         {
                                 $(this.editorDoc).keydown(function (event)
                                 {
-                                        if (event.ctrlKey)
+                                        /* Meta for Macs. tom@punkave.com */
+			                                  if (event.ctrlKey || event.metaKey)
                                         {
                                                 switch (event.keyCode)
                                                 {
