@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<head>
+  <title>Example: AutoGrow - jWYSIWYG</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="../jwysiwyg/jquery.wysiwyg.css" type="text/css" />
+</head>
+
+<body>
+  <h1>jWYSIWYG</h1>
+  <h2>Example: AutoGrow</h2>
+  <div>
+    <textarea name="wysiwyg" id="wysiwyg" rows="5" cols="47"></textarea>
+  </div>
+  <script type="text/javascript" src="../lib/jquery-1.4.3.min.js"></script>
+  <script type="text/javascript" src="../jwysiwyg/jquery.wysiwyg.js"></script>
+  <script type="text/javascript">
+  $(function()
+  {
+      $('#wysiwyg').wysiwyg({
+        autoGrow: true,
+        maxHeight: 600
+      });
+  });
+  </script>
+</body>
+</html>

@@ -141,7 +141,9 @@
                 },
                 events: { },
                 controls: { },
-                resizeOptions: false
+                resizeOptions: false,
+                autoGrow: false,
+                maxHeight: 10000
         };
 		
 		/**
@@ -829,7 +831,6 @@
                         $(element).hide().before(this.element);
 
                         this.viewHTML = false;
-                        this.initialHeight = newY - 8;
 
                         /**
                          * @link http://code.google.com/p/jwysiwyg/issues/detail?id=52
@@ -978,6 +979,17 @@
                                 };
                                 $(this.editorDoc).keydown(handler).keyup(handler).mousedown(handler).bind($.support.noCloneEvent ? "input" : "paste", handler);
 
+                        }
+
+                        if (this.options.autoGrow)
+                        {
+                                this.initialHeight = $(this.editorDoc).height();
+                                $(this.editorDoc).find('body').css('border', '1px solid white'); // cancel margin collapsing
+                                var growHandler = function () {
+                                        self.grow();
+                                };
+                                $(this.editorDoc).keyup(growHandler);
+                                self.grow();
                         }
 
                         if (this.options.css)
@@ -1192,6 +1204,17 @@
                                 }
                         }
 						return this;
+                },
+
+                grow: function ()
+                {
+                        var innerHeight = innerDocument(this.editor).height;
+                        var minHeight = this.initialHeight;
+                        var height = Math.max(innerHeight, minHeight);
+                        height = Math.min(height, this.options.maxHeight);
+                        this.editor.css('overflow', height < this.options.maxHeight ? 'hidden' : ''); // hide scrollbar
+                        this.editor[0].height = height;
+                        return this;
                 },
 
                 withoutCss: function ()
