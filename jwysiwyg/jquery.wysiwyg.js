@@ -802,7 +802,7 @@
 										// fix for issue 12 ( http://github.com/akzhan/jwysiwyg/issues/issue/12 )
                                         width: (newX > 50) ? (newX - 8).toString() + 'px' : ''
                                     });
-                                    if ($.browser.msie)
+                                    if ($.browser.msie && parseFloat($.browser.version) < 7)
                                     {
                                         this.editor.css('height', newY.toString() + 'px');
                                     }
@@ -1209,7 +1209,7 @@
                 grow: function ()
                 {
                         var innerBody = $(innerDocument(this.editor).body);
-                        var innerHeight = innerBody.height() + 2; // 2 - top & bottom borders height
+                        var innerHeight = $.browser.msie ? innerBody[0].scrollHeight : innerBody.height() + 2; // 2 - top & bottom borders height
                         var minHeight = this.initialHeight;
                         var height = Math.max(innerHeight, minHeight);
                         height = Math.min(height, this.options.maxHeight);
