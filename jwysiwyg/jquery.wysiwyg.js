@@ -145,7 +145,7 @@
                 autoGrow: false,
                 maxHeight: 10000
         };
-		
+
 		/**
 		 * Custom control support by Alec Gorge ( http://github.com/alecgorge )
 		 */
@@ -798,11 +798,11 @@
 								{
                                     this.editor.css({
                                         minHeight: (newY - 6).toString() + 'px',
-										
+
 										// fix for issue 12 ( http://github.com/akzhan/jwysiwyg/issues/issue/12 )
                                         width: (newX > 50) ? (newX - 8).toString() + 'px' : ''
                                     });
-                                    if ($.browser.msie && parseFloat($.browser.version) < 7)
+                                    if ($.browser.msie && parseInt($.browser.version) < 7)
                                     {
                                         this.editor.css('height', newY.toString() + 'px');
                                     }
@@ -892,7 +892,9 @@
                          */
                         .replace(/INITIAL_CONTENT/, function ()
                         {
-                                return self.initialContent;
+                                return '<div style="border: 1px solid red;">'
+                                        + self.initialContent
+                                        + '</div>'; // This div is needed for autoGrow
                         }).replace(/STYLE_SHEET/, function ()
                         {
                                 return style;
@@ -926,6 +928,35 @@
 								}
                                 self.focus();
                         });
+
+                        this.emptyContentRegex = /<([\w]+)[^>]*>(<br\/?>)?<\/\1>/;
+                        $(this.editorDoc).keydown(function (event)
+                        {
+                                if (event.keyCode == 8) // backspace
+                                {
+                                        var content = self.getContent();
+                                        if (self.emptyContentRegex.test(content)) { // if content is empty
+                                                event.stopPropagation(); // prevent remove empty tags
+                                                return false;
+                                        }
+                                }
+                                return true;
+                        });
+
+                        if ($.browser.msie && parseInt($.browser.version) < 8) {
+                                this.options.brIE = true;
+                        }
+
+                        if (this.options.autoGrow)
+                        {
+                                this.initialHeight = $(this.editorDoc).height();
+                                //$(this.editorDoc).find('body').css('border', '1px solid white'); // cancel margin collapsing
+                                var growHandler = function () {
+                                        self.grow();
+                                };
+                                $(this.editorDoc).keyup(growHandler);
+                                self.grow();
+                        }
 
                         if (!$.browser.msie)
                         {
@@ -979,17 +1010,6 @@
                                 };
                                 $(this.editorDoc).keydown(handler).keyup(handler).mousedown(handler).bind($.support.noCloneEvent ? "input" : "paste", handler);
 
-                        }
-
-                        if (this.options.autoGrow)
-                        {
-                                this.initialHeight = $(this.editorDoc).height();
-                                $(this.editorDoc).find('body').css('border', '1px solid white'); // cancel margin collapsing
-                                var growHandler = function () {
-                                        self.grow();
-                                };
-                                $(this.editorDoc).keyup(growHandler);
-                                self.grow();
                         }
 
                         if (this.options.css)
@@ -1132,12 +1152,12 @@
 
                 getContent: function ()
                 {
-                        return $(innerDocument(this.editor)).find('body').html();
+                        return $(innerDocument(this.editor)).find('body > div:first').html();
                 },
 
                 setContent: function (newContent)
                 {
-                        $(innerDocument(this.editor)).find('body').html(newContent);
+                        $(innerDocument(this.editor)).find('body > div:first').html(newContent);
 						return this;
                 },
                 insertHtml: function (szHTML)
@@ -1209,7 +1229,7 @@
                 grow: function ()
                 {
                         var innerBody = $(innerDocument(this.editor).body);
-                        var innerHeight = $.browser.msie ? innerBody[0].scrollHeight : innerBody.height() + 2; // 2 - top & bottom borders height
+                        var innerHeight = innerBody.children(':first').height() + 2 + 20; // 2 - for borders, 20 - to prevent content jumping on grow
                         var minHeight = this.initialHeight;
                         var height = Math.max(innerHeight, minHeight);
                         height = Math.min(height, this.options.maxHeight);
