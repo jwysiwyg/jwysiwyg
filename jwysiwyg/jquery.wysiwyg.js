@@ -71,7 +71,7 @@
                                 params[i - 1] = arguments[i];
                         }
 						var retValue = null;
-						
+
 						// .filter('textarea') is a fix for bug 29 ( http://github.com/akzhan/jwysiwyg/issues/issue/29 )
                         this.filter('textarea').each(function()
                         {
@@ -162,14 +162,14 @@
 					}
 				};
 				*/
-				
+
 				var custom = {};
 				custom[name] = {visible: false, custom: true, options: settings};
-				
+
 				$.extend($.fn.wysiwyg.controls, $.fn.wysiwyg.controls, custom);
 			}
 		};
-		
+
         $.fn.wysiwyg.controls = {
                 bold: {
                         visible: true,
@@ -561,7 +561,7 @@
                          exec    : function()
                          {
                                  var selection = $(this.editor).documentSelection();
-                                 if ($("<div />").append(selection).children().length > 0) 
+                                 if ($("<div />").append(selection).children().length > 0)
                                  {
                                          selection = $(selection).attr("dir", "rtl");
                                  }
@@ -578,7 +578,7 @@
                         exec    : function()
                         {
                                 var selection = $(this.editor).documentSelection();
-                                if ($("<div />").append(selection).children().length > 0) 
+                                if ($("<div />").append(selection).children().length > 0)
                                 {
                                         selection = $(selection).attr("dir", "ltr");
                                 }
@@ -766,6 +766,10 @@
                         this.options = options || {
                         };
 
+                        if ($.browser.msie && parseInt($.browser.version) < 8) {
+                                this.options.autoGrow = false;
+                        }
+
                         $.data(element, 'wysiwyg', this);
 
                         var newX = element.width || element.clientWidth || 0;
@@ -778,7 +782,7 @@
                                 if (newX === 0 && element.cols)
                                 {
                                         newX = (element.cols * 8) + 21;
-										
+
 										// fix for issue 30 ( http://github.com/akzhan/jwysiwyg/issues/issue/30 )
 										element.cols = 1;
                                 }
@@ -859,7 +863,7 @@
                         var $form = $(element).closest('form');
 
                         if (this.options.autoSave)
-                        {                            
+                        {
                                 $form.submit(self.autoSaveFunction);
                         }
 
@@ -892,9 +896,7 @@
                          */
                         .replace(/INITIAL_CONTENT/, function ()
                         {
-                                return '<div style="border: 1px solid red;">'
-                                        + self.initialContent
-                                        + '</div>'; // This div is needed for autoGrow
+                                return self.initialContent;
                         }).replace(/STYLE_SHEET/, function ()
                         {
                                 return style;
@@ -929,34 +931,19 @@
                                 self.focus();
                         });
 
-                        this.emptyContentRegex = /<([\w]+)[^>]*>(<br\/?>)?<\/\1>/;
+                        this.emptyContentRegex = /^<([\w]+)[^>]*>(<br\/?>)?<\/\1>/;
                         $(this.editorDoc).keydown(function (event)
                         {
                                 if (event.keyCode == 8) // backspace
                                 {
                                         var content = self.getContent();
                                         if (self.emptyContentRegex.test(content)) { // if content is empty
-                                                event.stopPropagation(); // prevent remove empty tags
+                                                event.stopPropagation(); // prevent remove single empty tag
                                                 return false;
                                         }
                                 }
                                 return true;
                         });
-
-                        if ($.browser.msie && parseInt($.browser.version) < 8) {
-                                this.options.brIE = true;
-                        }
-
-                        if (this.options.autoGrow)
-                        {
-                                this.initialHeight = $(this.editorDoc).height();
-                                //$(this.editorDoc).find('body').css('border', '1px solid white'); // cancel margin collapsing
-                                var growHandler = function () {
-                                        self.grow();
-                                };
-                                $(this.editorDoc).keyup(growHandler);
-                                self.grow();
-                        }
 
                         if (!$.browser.msie)
                         {
@@ -1012,6 +999,17 @@
 
                         }
 
+                        if (this.options.autoGrow)
+                        {
+                                this.initialHeight = $(this.editorDoc).height();
+                                $(this.editorDoc).find('body').css('border', '1px solid white'); // cancel margin collapsing
+                                var growHandler = function () {
+                                        self.grow();
+                                };
+                                $(this.editorDoc).keyup(growHandler);
+                                self.grow();
+                        }
+
                         if (this.options.css)
                         {
                                 window.setTimeout(function ()
@@ -1043,7 +1041,7 @@
                         {
                                 $(self.editorDoc).bind(key, handler);
                         });
-						
+
 						// restores selection properly on focus
 						$(self.editor).blur(function() {
 							self.rangeSaver = self.getInternalRange();
@@ -1062,7 +1060,7 @@
                             }
                         }
                 },
-				
+
 				focusEditor: function () {
 					//console.log(this.editorDoc.body.focus());//.focus();
 					if (this.rangeSaver != null) {
@@ -1077,7 +1075,7 @@
 						else if (document.selection) { //IE
 							savedRange.select();
 						}
-					}					
+					}
 				},
 
 				execute: function (command, arg) {
@@ -1129,7 +1127,7 @@
                 getRange: function ()
                 {
                         var selection = this.getSelection();
-						
+
                         if (!selection)
                         {
                                 return null;
@@ -1141,7 +1139,7 @@
                 getInternalRange: function ()
                 {
                         var selection = this.getInternalSelection();
-						
+
                         if (!selection)
                         {
                                 return null;
@@ -1152,12 +1150,12 @@
 
                 getContent: function ()
                 {
-                        return $(innerDocument(this.editor)).find('body > div:first').html();
+                        return $(innerDocument(this.editor)).find('body').html();
                 },
 
                 setContent: function (newContent)
                 {
-                        $(innerDocument(this.editor)).find('body > div:first').html(newContent);
+                        $(innerDocument(this.editor)).find('body').html(newContent);
 						return this;
                 },
                 insertHtml: function (szHTML)
@@ -1229,12 +1227,15 @@
                 grow: function ()
                 {
                         var innerBody = $(innerDocument(this.editor).body);
-                        var innerHeight = innerBody.children(':first').height() + 2 + 20; // 2 - for borders, 20 - to prevent content jumping on grow
+                        var innerHeight = $.browser.msie ? innerBody[0].scrollHeight : innerBody.height() + 2 + 20; // 2 - borders, 20 - to prevent content jumping on grow
+
                         var minHeight = this.initialHeight;
                         var height = Math.max(innerHeight, minHeight);
                         height = Math.min(height, this.options.maxHeight);
+
                         this.editor.attr('scrolling', height < this.options.maxHeight ? 'no' : 'auto'); // hide scrollbar firefox
                         innerBody.css('overflow', height < this.options.maxHeight ? 'hidden' : ''); // hide scrollbar chrome
+
                         this.editor[0].height = height;
                         return this;
                 },
@@ -1266,7 +1267,7 @@
                         var self = this;
 
 						$(window).bind("wysiwyg-trigger-"+name, options.callback);
-						
+
                         return $('<li role="menuitem" UNSELECTABLE="on"><img src="' + options.icon + '" class="jwysiwyg-custom-icon" />' + (name) + '</li>')
 									.addClass("custom-command-"+name)
 									.addClass("jwysiwyg-custom-command")
@@ -1278,7 +1279,7 @@
 									})
 									.appendTo(this.panel);
                 },
-				
+
 				triggerCallback : function (name) {
 					$(window).trigger("wysiwyg-trigger-"+name, [
 						this.getInternalRange(),
@@ -1332,7 +1333,7 @@
                         var hasVisibleControls = true; // to prevent separator before first item
                         for (var name in controls)
                         {
-                                var control = controls[name];                            
+                                var control = controls[name];
 								if (control.groupIndex && currentGroupIndex != control.groupIndex)
                                 {
                                         currentGroupIndex = control.groupIndex;
@@ -1347,7 +1348,7 @@
                                         this.appendMenuSeparator();
                                         hasVisibleControls = true;
                                 }
-								
+
 								if(control.custom) {
 									this.appendMenuCustom(name, control.options);
 								}
