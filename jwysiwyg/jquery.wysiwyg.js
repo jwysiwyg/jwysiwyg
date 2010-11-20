@@ -1208,11 +1208,13 @@
 
                 grow: function ()
                 {
-                        var innerHeight = innerDocument(this.editor).height;
+                        var innerBody = $(innerDocument(this.editor).body);
+                        var innerHeight = innerBody.height() + 2; // 2 - top & bottom borders height
                         var minHeight = this.initialHeight;
                         var height = Math.max(innerHeight, minHeight);
                         height = Math.min(height, this.options.maxHeight);
-                        this.editor.css('overflow', height < this.options.maxHeight ? 'hidden' : ''); // hide scrollbar
+                        this.editor.attr('scrolling', height < this.options.maxHeight ? 'no' : 'auto'); // hide scrollbar firefox
+                        innerBody.css('overflow', height < this.options.maxHeight ? 'hidden' : ''); // hide scrollbar chrome
                         this.editor[0].height = height;
                         return this;
                 },
