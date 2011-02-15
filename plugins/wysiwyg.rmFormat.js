@@ -207,6 +207,18 @@
 			text = text.replace(/<w:([^\s>]+)(?:\s[^>]+)?>[\s\S]*?<\/w:\1>/gm, "");
 			text = text.replace(/<m:([^\s>]+)(?:\s[^\/]+)?\/>/g, "");
 			text = text.replace(/<m:([^\s>]+)(?:\s[^>]+)?>[\s\S]*?<\/m:\1>/gm, "");
+
+			// after running the above.. it still needed these
+			text=text.replace(/<xml>[\s\S]*?<\/xml>/g,"");
+			text=text.replace(/<object(?:\s[^>]*)?>[\s\S]*?<\/object>/g,"");
+			text = text.replace(/<o:([^\s>]+)(?:\s[^\/]+)?\/>/g, "");
+			text = text.replace(/<o:([^\s>]+)(?:\s[^>]+)?>[\s\S]*?<\/o:\1>/gm, "");
+			text = text.replace(/<st1:([^\s>]+)(?:\s[^\/]+)?\/>/g,"");
+			text = text.replace(/<st1:([^\s>]+)(?:\s[^>]+)?>[\s\S]*?<\/st1:\1>/gm,"");
+			// ----
+			text = text.replace(/<!--[^>]+>\s*<[^>]+>/gm,""); // firefox needed this 1
+
+
 			text = text.replace(/^[\s\n]+/gm, "");
 
 			if (this.options.rules.msWordMarkup.tags) {
