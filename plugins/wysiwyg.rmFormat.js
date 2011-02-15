@@ -227,11 +227,11 @@
 					
 					if ("string" === typeof (rules)) {
 						if ("" === rules) {
-							reg = new RegExp("<" + tagName + "(?:\\s[^>]+)?/?>", "gm");
+							reg = new RegExp("<" + tagName + "(?:\\s[^>]+)?/?>", "gmi");
 							text = text.replace(reg, "<" + tagName + ">");
 						}
 					} else if ("object" === typeof (rules)) {
-						reg = new RegExp("<" + tagName + "(\\s[^>]+)?/?>", "gm");
+						reg = new RegExp("<" + tagName + "(\\s[^>]+)?/?>", "gmi");
 						found = reg.exec(text);
 						attrs = "";
 
@@ -244,14 +244,14 @@
 								attrs = "";
 							} else if ("object" === typeof (rules.rmAttr) && attrs) {
 								for (attrName in rules.rmAttr) {
-									regAttr = new RegExp('' + attrName + '="[^"]*"', "m");
+									regAttr = new RegExp('' + attrName + '="[^"]*"', "mi");
 									attrs = attrs.replace(regAttr, "");
 								}
 							}
 						}
 
 						if (attrs) {
-							attrs = attrs.replace(/[\s\n]+/gm, " ");
+							attrs = attrs.replace(/[\s\n]+/gmi, " ");
 							
 							if (" " === attrs) {
 								attrs = "";
@@ -269,12 +269,12 @@
 						//
 					} else if ("object" === typeof (rules)) {
 						if (rules.rmWhenEmpty) {
-							reg = new RegExp("<" + tagName + "(\\s[^>]+)?>(?:[\\s\\n]|<br/?>)*?</" + tagName + ">", "gm");
+							reg = new RegExp("<" + tagName + "(\\s[^>]+)?>(?:[\\s\\n]|<br/?>)*?</" + tagName + ">", "gmi");
 							text = text.replace(reg, "");
 						}
 
 						if (rules.rmWhenNoAttr) {
-							reg = new RegExp("<" + tagName + ">(?!<" + tagName + ">)([\\s\\S]*?)</" + tagName + ">", "m");
+							reg = new RegExp("<" + tagName + ">(?!<" + tagName + ">)([\\s\\S]*?)</" + tagName + ">", "mi");
 							found = reg.exec(text);
 							while (found) {
 								text = text.replace(reg, found[1]);
