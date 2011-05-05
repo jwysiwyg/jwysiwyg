@@ -34,7 +34,7 @@
 				width   : "Width",
 				height  : "Height",
 				original : "Original W x H",
-				float	: "Float",
+				"float"	: "Float",
 				floatNone : "None",
 				floatLeft : "Left",
 				floatRight : "Right",
