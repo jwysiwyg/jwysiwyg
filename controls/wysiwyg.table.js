@@ -108,6 +108,7 @@
 				},
 				close: function (event, ui) {
 					dialog.dialog("destroy");
+					dialog.remove();
 				}
 			});
 		} else {
