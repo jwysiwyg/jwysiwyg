@@ -31,7 +31,7 @@
 						groupIndex: 12,
 						tooltip: "File Manager",
 						exec: function () {
-							$.wysiwyg.fileManager.setAjaxHandler("http://localhost/cgi-bin/wysiwyg_file_handler.pl").init(function (file) {
+							$.wysiwyg.fileManager.setAjaxHandler("http://localhost/cgi-bin/file_manager.pl").init(function (file) {
 								file ? alert(file) : alert("No file selected.");
 							});
 						}
