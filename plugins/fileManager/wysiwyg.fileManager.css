@@ -7,7 +7,11 @@
  * The Silk Icon Set is released under CC-3.0/2.5  and was created by FAMFAMFAM.
  */
  
-div.wysiwyg ul.toolbar li.fileManager { background: url('icon.png'); }
+div.wysiwyg ul.toolbar li.fileManager, div.wysiwyg-fileManager { background: url('icon.png'); }
+div.wysiwyg-fileManager { width:16px; height:16px; cursor: pointer; cursor: hand; }
+
+
+.wysiwyg-files-wrapper { padding:10px; }
 
 #wysiwyg-files-list-wrapper { min-height:50px; max-height:400px; overflow:auto; }
 * html #wysiwyg-files-list-wrapper { height: 600px; }

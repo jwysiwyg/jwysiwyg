@@ -73,7 +73,8 @@
 				"Float": "",
 				"None": "",
 				"Left": "",
-				"Right": ""
+				"Right": "",
+				"Select file from server": ""
 			},
 
 			link: {
