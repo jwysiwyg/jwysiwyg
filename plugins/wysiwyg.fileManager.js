@@ -25,20 +25,17 @@
 		selected: null,
 		setAjaxHandler: function (_handler) {
 			this.ajaxHandler = _handler;
+			this.ready = true;
+			
 			return this;
 		},
-		isAjaxSet: function () {
-			if (this.ajaxHandler) {
-				return true;
-			} else {
-				return false;
-			}
-		},
+		ready: false,
 		init: function (callback) {
-			if (this.ajaxHandler) {
+			if (this.ready) {
 				var manager = new fileManagerObj(this.ajaxHandler);
 				manager.load(callback);
 			} else {
+				console.log("$.wysiwyg.fileManager: Must set ajax handler first, using $.wysiwyg.fileManager.setAjaxHandler()");
 				return false;
 			}
 		}

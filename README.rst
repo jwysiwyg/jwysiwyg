@@ -471,11 +471,14 @@ Then, all you have to do is start using it, as explained below.
 Usage
 -----
 
-The file manager has pretty simple syntax, and it uses three basic methods:
+The file manager has pretty simple syntax, and it uses two basic methods:
 
 * $.wysiwyg.fileManager.setAjaxHandler()
-* $.wysiwyg.fileManager.isAjaxSet()
 * $.wysiwyg.fileManager.init()
+
+And another important boolean value:
+
+* $.wysiwyg.fileManager.ready
 
 First, you must set an ajax handler. The plugin does not force you to use its official available handlers, it enables you to set your own route for the handler.
 In order to initiate the file manager interface, you should call 'init()'. The init() method will not fire until there is an ajax handler.
@@ -503,8 +506,8 @@ Use Within Other Plugins
 In addition to its stand-alone usage, the File Manager plugin can be incorporated quite easily into other plugins.
 Actually, the only thing the should be checked before using the plugin, is whether its ajax handler is set: ::
 
-	if ($.wysiwyg.fileManager.isAjaxSet()) {
-		$.wysiwyg.fileManager.setAjaxHandler("http://example.com/jwysiwyg/handler.php").init(function (selected) {
+	if ($.wysiwyg.fileManager.ready) {
+		$.wysiwyg.fileManager.init(function (selected) {
 			alert(selected);
 		});	
 	}
