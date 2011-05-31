@@ -2055,6 +2055,8 @@
 			$that	= $(that);
 
 		this.options = {
+			"modal": true,
+			"draggable": false,
 			"title": "Title",
 			"content": "Content",
 			"width":"auto",
@@ -2075,6 +2077,46 @@
 			var $dialog = obj.show.apply(that, []);
 
 			$that.trigger("afterOpen", [$dialog]);
+			
+			// alert($that.children("div").length);
+			
+			// Modal feature:
+			if (that.options.modal) { 
+				$("<div/>", { "class": "wysiwyg-dialog-modal-div" }).appendTo("body");
+			}
+			
+			// Draggable feature:
+			if (that.options.draggable) { 
+				
+				var mouseDown = false;
+				
+				$("div.wysiwyg-dialog-topbar").bind("mousedown", function (e) {
+					e.preventDefault();
+					$(this).css({ "cursor": "move" });
+					var _dialog = $(this).parents(".wysiwyg-dialog"),
+						offsetX = (e.pageX - parseInt(_dialog.css("left"))),
+						offsetY = (e.pageY - parseInt(_dialog.css("top")));
+					mouseDown = true;
+					$(this).css({ "cursor": "move" });
+					
+					$("*").bind("mousemove", function (e) {
+						e.preventDefault();
+						if (mouseDown) {
+							_dialog.css({
+								"top": (e.pageY - offsetY),
+								"left": (e.pageX - offsetX)
+							});
+						}
+					}).bind("mouseup", function (e) {
+						e.preventDefault();
+						mouseDown = false;
+						$(this).css({ "cursor": "" });
+					});
+				
+				});
+				
+			}
+			
 		};
 
 		this.show = function () {
@@ -2108,6 +2150,17 @@
 			obj.destroy.apply(that, []);
 			
 			$that.trigger("afterClose", [$dialog]);
+			
+			// Modal feature:
+			if (that.options.modal) { 
+				$("body").find("div.wysiwyg-dialog-modal-div").remove();
+			}
+			
+			// Draggable feature:
+			if (that.options.draggable) { 
+				$("div.wysiwyg-dialog-topbar").unbind("mousedown");
+			}
+			
 		};
 
 		if (this.options.open) {
@@ -2221,10 +2274,16 @@
 				var $dcontent = $('<div class="wysiwyg-dialog-content">'+content+'</div>');
 
 				that._$dialog.append($topbar).append($dcontent);
-
+				
+				
+				// Set dialog's height & width, and position it correctly:
+				var dialogHeight = this.options.height == 'auto' ? 300 : this.options.height,
+					dialogWidth = this.options.width == 'auto' ? 450 : this.options.width;
 				that._$dialog.hide().css({
-					"width":this.options.width == 'auto' ? 450 : this.options.width,
-					"height":this.options.height == 'auto' ? 300 : this.options.height
+					"width": dialogWidth,
+					"height": dialogHeight,
+					"left": (($(window).width() - dialogWidth) / 2),
+					"top": (($(window).height() - dialogHeight) / 3)
 				});
 
 				$("body").append(that._$dialog);
