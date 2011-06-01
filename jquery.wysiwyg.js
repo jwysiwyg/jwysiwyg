@@ -2053,8 +2053,10 @@
 			obj		= $.wysiwyg.dialog.createDialog(theme),
 			that	= this,
 			$that	= $(that);
-
+				
 		this.options = {
+			"modal": true,
+			"draggable": true,
 			"title": "Title",
 			"content": "Content",
 			"width":"auto",
@@ -2075,6 +2077,7 @@
 			var $dialog = obj.show.apply(that, []);
 
 			$that.trigger("afterOpen", [$dialog]);
+			
 		};
 
 		this.show = function () {
@@ -2108,6 +2111,7 @@
 			obj.destroy.apply(that, []);
 			
 			$that.trigger("afterClose", [$dialog]);
+			
 		};
 
 		if (this.options.open) {
@@ -2159,14 +2163,16 @@
 
 					that._$dialog = $('<div></div>').attr('title', this.options.title).html(content);
 
-					console.log(that._$dialog);
+					var dialogHeight = this.options.height == 'auto' ? 300 : this.options.height,
+						dialogWidth = this.options.width == 'auto' ? 450 : this.options.width;
+
+					// console.log(that._$dialog);
+					
 					that._$dialog.dialog({
-						modal: true,
-						height: this.options.height,
-						width: this.options.width,
-						close: function () {
-							abstractDialog.close();
-						}
+						modal: this.options.modal,
+						draggable: this.options.draggable,
+						height: dialogHeight,
+						width: dialogWidth
 					});
 
 					return that._$dialog;
@@ -2215,16 +2221,21 @@
 				$link.click(function () {
 					abstractDialog.close(); // this is important it makes sure that is close from the abstract $.wysiwyg.dialog instace, not just locally 
 				});
-
+				
 				$topbar.find('.wysiwyg-dialog-close-wrapper').prepend($link);
 
 				var $dcontent = $('<div class="wysiwyg-dialog-content">'+content+'</div>');
 
 				that._$dialog.append($topbar).append($dcontent);
-
+				
+				// Set dialog's height & width, and position it correctly:
+				var dialogHeight = this.options.height == 'auto' ? 300 : this.options.height,
+					dialogWidth = this.options.width == 'auto' ? 450 : this.options.width;
 				that._$dialog.hide().css({
-					"width":this.options.width == 'auto' ? 450 : this.options.width,
-					"height":this.options.height == 'auto' ? 300 : this.options.height
+					"width": dialogWidth,
+					"height": dialogHeight,
+					"left": (($(window).width() - dialogWidth) / 2),
+					"top": (($(window).height() - dialogHeight) / 3)
 				});
 
 				$("body").append(that._$dialog);
@@ -2233,8 +2244,48 @@
 			};
 
 			this.show = function () {
+
+				// Modal feature:
+				if (this.options.modal) {
+					that._$dialog.wrap('<div class="wysiwyg-dialog-modal-div"></div>');
+				}
+				
+				// Draggable feature:
+				if (this.options.draggable) { 
+					
+					var mouseDown = false;
+					
+					that._$dialog.find("div.wysiwyg-dialog-topbar").bind("mousedown", function (e) {
+						e.preventDefault();
+						$(this).css({ "cursor": "move" });
+						var $topbar = $(this),
+							_dialog = $(this).parents(".wysiwyg-dialog"),
+							offsetX = (e.pageX - parseInt(_dialog.css("left"))),
+							offsetY = (e.pageY - parseInt(_dialog.css("top")));
+						mouseDown = true;
+						$(this).css({ "cursor": "move" });
+						
+						$(document).bind("mousemove", function (e) {
+							e.preventDefault();
+							if (mouseDown) {
+								_dialog.css({
+									"top": (e.pageY - offsetY),
+									"left": (e.pageX - offsetX)
+								});
+							}
+						}).bind("mouseup", function (e) {
+							e.preventDefault();
+							mouseDown = false;
+							$topbar.css({ "cursor": "auto" });
+							$(document).unbind("mousemove").unbind("mouseup");
+						});
+					
+					});
+				}
+				
 				that._$dialog.show();
 				return that._$dialog;
+
 			};
 
 			this.hide = function () {
@@ -2243,6 +2294,17 @@
 			};
 
 			this.destroy = function() {
+			
+				// Modal feature:
+				if (this.options.modal) { 
+					that._$dialog.unwrap();
+				}
+				
+				// Draggable feature:
+				if (this.options.draggable) { 
+					that._$dialog.find("div.wysiwyg-dialog-topbar").unbind("mousedown");
+				}
+				
 				that._$dialog.remove();
 				return that._$dialog;
 			};
