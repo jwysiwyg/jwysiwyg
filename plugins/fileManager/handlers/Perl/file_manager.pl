@@ -14,8 +14,11 @@ my $action = param("action");
 # All responses are strict JSON.
 print "Content-type: application/json; charset=utf-8\n\n";
 
-my $dir = param("dir");
-$dir = url_decode($dir);
+my $dir;
+if (param("dir")) {
+	$dir = param("dir");
+	$dir = url_decode($dir);
+}
 my $JSON = JSON::XS->new()->pretty(1);
 
 

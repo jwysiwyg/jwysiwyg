@@ -2049,8 +2049,9 @@
 	 * 
 	 */
 	$.wysiwyg.dialog = function (jWysiwyg, opts) {
-		var theme	= (jWysiwyg && jWysiwyg.options && jWysiwyg.options.dialog) ? jWysiwyg.options.dialog : "default",
-			obj		= $.wysiwyg.dialog.createDialog(theme),
+		
+		var theme	= (jWysiwyg && jWysiwyg.options && jWysiwyg.options.dialog) ? jWysiwyg.options.dialog : (opts.theme ? opts.theme : "default"),
+			obj		= new $.wysiwyg.dialog.createDialog(theme),
 			that	= this,
 			$that	= $(that);
 				
@@ -2068,6 +2069,8 @@
 		this.isOpen = false;
 
 		$.extend(this.options, opts);
+
+		this.object = obj;
 
 		// Opens a dialog with the specified content
 		this.open = function () {
