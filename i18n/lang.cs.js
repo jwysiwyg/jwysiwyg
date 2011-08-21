@@ -1,10 +1,9 @@
 /**
  * Internationalization: czech language
- * 
+ *
  * Depends on jWYSIWYG, $.wysiwyg.i18n
  *
  * By: deepj on github.com
- *
  */
 (function ($) {
 	if (undefined === $.wysiwyg) {
@@ -62,6 +61,28 @@
 				"Color": "Barva"
 			},
 
+			fileManager: {
+				"file_manager": "Správce souborů",
+				"upload_title": "Nahrát soubor",
+				"rename_title": "Přejmenovat soubor",
+				"remove_title": "Odstranit soubor",
+				"mkdir_title": "Vytvořit adresář",
+				"upload_action": "Nahrádt nový soubor do aktualního adresáře",
+				"mkdir_action": "Vytvořit nový adresář",
+				"remove_action": "Odstranit tento soubor",
+				"rename_action": "Přejmenovat tento soubor" ,
+				"delete_message": "Jste si jisti, že chcete smazat tento soubor?",
+				"new_directory": "Nový adresář",
+				"previous_directory": "Vrať se do přechozího adresáře",
+				"rename": "Přejmenovat",
+				"select": "Vybrat",
+				"create": "Vytvořit",
+				"submit": "Vložit",
+				"cancel": "Zrušit",
+				"yes": "Ano",
+				"no": "Ne"
+			},
+
 			image: {
 				"Insert Image": "Vložit obrázek",
 				"Preview": "Náhled",
@@ -71,10 +92,11 @@
 				"Width": "Šířka",
 				"Height": "Výška",
 				"Original W x H": "Původní šířka a výška",
-				"Float": "",
-				"None": "",
-				"Left": "",
-				"Right": ""
+				"Float": "Obtékání",
+				"None": "Žádné",
+				"Left": "Doleva",
+				"Right": "Doprava",
+				"Select file from server": "Vybrat soubor ze serveru"
 			},
 
 			link: {
