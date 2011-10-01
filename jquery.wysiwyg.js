@@ -26,6 +26,11 @@
 	var supportsProp = (('prop' in $.fn) && ('removeProp' in $.fn));
 
 	function Wysiwyg() {
+		// - the item is added by this.ui.appendControls and then appendItem
+		// - click triggers this.triggerControl
+		// cmd or[key] - designMode exec function name
+		// tags - activates control for these tags (@see checkTargets)
+		// css - activates control if one of css is applied
 		this.controls = {
 			bold: {
 				groupIndex: 0,
@@ -161,7 +166,7 @@
 						elementHeight = this.element.height();
 					}
 
-					if (this.viewHTML) {
+					if (this.viewHTML) { //textarea is shown
 						this.setContent(this.original.value);
 
 						$(this.original).hide();
@@ -187,7 +192,7 @@
 								li.removeClass('disabled');
 							}
 						});
-					} else {
+					} else { //wysiwyg is shown
 						this.saveContent();
 
 						$(this.original).css({
@@ -534,6 +539,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			dialog : "default"
 		};
 
+		//these properties are set from control hashes
 		this.availableControlProperties = [
 			"arguments",
 			"callback",
@@ -550,7 +556,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			"visible"
 		];
 
-		this.editor			= null;
+		this.editor			= null;  //jquery iframe holder
 		this.editorDoc		= null;
 		this.element		= null;
 		this.options		= {};
@@ -688,7 +694,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				controlsByGroup = {},
 				i,
 				currentGroupIndex, // jslint wants all vars at top of function
-				iterateGroup = function (controlName, control) {
+				iterateGroup = function (controlName, control) { //called for every group when adding
 					if (control.groupIndex && currentGroupIndex !== control.groupIndex) {
 						currentGroupIndex = control.groupIndex;
 						hasVisibleControls = false;
@@ -710,7 +716,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 					}
 				};
 
-			$.each(controls, function (name, c) {
+			$.each(controls, function (name, c) { //sort by groupIndex
 				var index = "empty";
 
 				if (undefined !== c.groupIndex) {
@@ -728,7 +734,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				controlsByGroup[index][name] = c;
 			});
 
-			groups.sort(function (a, b) {
+			groups.sort(function (a, b) { //just sort group indexes by
 				if ("number" === typeof (a) && typeof (a) === typeof (b)) {
 					return (a - b);
 				} else {
@@ -821,9 +827,11 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			this.saveContent();
 		};
 
+		//called after click in wysiwyg "textarea"
 		this.ui.checkTargets = function (element) {
 			var self = this.self;
 
+			//activate controls
 			$.each(self.options.controls, function (name, control) {
 				var className = control.className || control.command || name || "empty",
 					tags,
@@ -849,6 +857,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 					self.ui.toolbar.find("." + className).removeClass("active");
 				}
 
+				//activate by allowed tags
 				if (control.tags || (control.options && control.options.tags)) {
 					tags = control.tags || (control.options && control.options.tags);
 
@@ -866,6 +875,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 					}
 				}
 
+				//activate by supposed css
 				if (control.css || (control.options && control.options.css)) {
 					css = control.css || (control.options && control.options.css);
 					el = $(element);
@@ -1603,6 +1613,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			return this;
 		};
 
+		//check allowed properties
 		this.parseControls = function () {
 			var self = this;
 
@@ -1614,7 +1625,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				});
 			});
 
-			if (this.options.parseControls) {
+			if (this.options.parseControls) { //user callback
 				return this.options.parseControls.call(this);
 			}
 
@@ -1708,14 +1719,14 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 		};
 
 		this.triggerControl = function (name, control) {
-			var cmd = control.command || name,
+			var cmd = control.command || name,							//command directly for designMode=on iframe (this.editorDoc)
 				args = control["arguments"] || [];
 
 			if (control.exec) {
-				control.exec.apply(this);
+				control.exec.apply(this);  //custom exec function in control, allows DOM changing
 			} else {
 				this.ui.focus();
-				this.ui.withoutCss();
+				this.ui.withoutCss(); //disable style="" attr inserting in mozzila's designMode
 				// when click <Cut>, <Copy> or <Paste> got "Access to XPConnect service denied" code: "1011"
 				// in Firefox untrusted JavaScript is not allowed to access the clipboard
 				try {
