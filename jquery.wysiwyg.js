@@ -1356,6 +1356,29 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				self.ui.checkTargets(event.target ? event.target : event.srcElement);
 			});
 
+            /**
+             * @link https://github.com/akzhan/jwysiwyg/issues/251
+             */
+            setInterval(function () {
+                var node = null;
+                var check = false;
+                try {
+                    var range = self.getInternalRange();
+                    if (range && $.isFunction(range.parentElement)) { //IE8
+                        node = range.parentElement();
+                        check = range.boundingWidth == 0;
+                    } else if (range && range.startContainer) { //FF, chrome, IE9
+                        node = range.startContainer.parentNode;
+                        check = range.startOffset == range.endOffset;
+                    }
+                }
+                catch (e) { console.error(e); }
+
+                if (check) {
+                    self.ui.checkTargets(node);
+                }
+            }, 400);
+            
 			/**
 			 * @link http://code.google.com/p/jwysiwyg/issues/detail?id=20
 			 */
