@@ -772,13 +772,25 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				.addClass(className)
 				.attr("title", tooltip)
 				.hover(this.addHoverClass, this.removeHoverClass)
-				.click(function () {
+				.click(function (event) {
 					if ($(this).hasClass("disabled")) {
 						return false;
 					}
 
 					self.triggerControl.apply(self, [name, control]);
 
+					/**
+					* @link https://github.com/akzhan/jwysiwyg/issues/219
+					*/
+					var $target = $(event.target);
+					for (var controlName in self.controls) {
+						if ($target.hasClass(controlName)) {
+							self.ui.toolbar.find("." + controlName).toggleClass("active");
+							self.editorDoc.rememberCommand = true;
+							break;
+						}
+					}
+                    
 					this.blur();
 					self.ui.returnRange();
 					self.ui.focus();
@@ -1360,22 +1372,22 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
              * @link https://github.com/akzhan/jwysiwyg/issues/251
              */
             setInterval(function () {
-                var node = null;
-                var check = false;
+                var offset = null;
+
                 try {
                     var range = self.getInternalRange();
-                    if (range && $.isFunction(range.parentElement)) { //IE8
-                        node = range.parentElement();
-                        check = range.boundingWidth == 0;
-                    } else if (range && range.startContainer) { //FF, chrome, IE9
-                        node = range.startContainer.parentNode;
-                        check = range.startOffset == range.endOffset;
+                    if (range) {
+                        offset = {
+                            range: range,
+                            parent: $.browser.msie ? range.parentElement() : range.endContainer.parentNode,
+                            width: ($.browser.msie ? range.boundingWidth : range.startOffset - range.endOffset) || 0
+                        };
                     }
                 }
                 catch (e) { console.error(e); }
 
-                if (check) {
-                    self.ui.checkTargets(node);
+                if (offset && offset.width == 0 && !self.editorDoc.rememberCommand) {
+                    self.ui.checkTargets(offset.parent);
                 }
             }, 400);
             
@@ -1398,6 +1410,8 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 						return false;
 					}
 				}
+                
+                self.editorDoc.rememberCommand = false;
 				return true;
 			});
 
