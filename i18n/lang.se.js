@@ -19,7 +19,7 @@
 			"Bold": "Tjock",
 			"Colorpicker": "",
 			"Copy": "Kopiera",
-			"Create link": "Skaka länk",
+			"Create link": "Skapa länk",
 			"Cut": "Klipp",
 			"Decrease font size": "Minska storlek",
 			"Fullscreen": "",
@@ -54,40 +54,40 @@
 
 		dialogs: {
 			// for all
-			"Apply": "",
-			"Cancel": "",
+			"Apply": "Applicera",
+			"Cancel": "Avbryt",
 
 			colorpicker: {
-				"Colorpicker": "",
-				"Color": ""
+				"Colorpicker": "Färgval",
+				"Color": "Färg"
 			},
 
 			image: {
-				"Insert Image": "",
-				"Preview": "",
-				"URL": "",
-				"Title": "",
-				"Description": "",
-				"Width": "",
-				"Height": "",
-				"Original W x H": "",
-				"Float": "",
-				"None": "",
-				"Left": "",
-				"Right": ""
+				"Insert Image": "Lägg in bild",
+				"Preview": "Förhandsgranska",
+				"URL": "URL",
+				"Title": "Rubrik",
+				"Description": "Beskrivning",
+				"Width": "Bredd",
+				"Height": "Höjd",
+				"Original W x H": "Original Bredd x Höjd",
+				"Float": "Flytande",
+				"None": "Ingen",
+				"Left": "Vänster",
+				"Right": "Höger"
 			},
 
 			link: {
-				"Insert Link": "",
-				"Link URL": "",
-				"Link Title": "",
-				"Link Target": ""
+				"Insert Link": "Skapa länk",
+				"Link URL": "LänkURL",
+				"Link Title": "Länkrubrik",
+				"Link Target": "Länkmål"
 			},
 
 			table: {
-				"Insert table": "",
-				"Count of columns": "",
-				"Count of rows": ""
+				"Insert table": "Skapa tabell",
+				"Count of columns": "Antal kolumner",
+				"Count of rows": "Antal rader"
 			}
 		}
 	};
