@@ -67,6 +67,15 @@
 				tags: ["a"],
 				tooltip: "Create link"
 			},
+			
+			unLink : {
+				groupIndex: 6,
+				visible: true,
+				exec : function() {
+					this.editorDoc.execCommand("unlink", false, null);
+				},
+				tooltip: "Remove link"
+			},
 
 			cut: {
 				groupIndex: 8,
