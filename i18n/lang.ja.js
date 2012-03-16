@@ -72,10 +72,10 @@
 				"Width": "横幅",
 				"Height": "高さ",
 				"Original W x H": "オリジナル 横 x 高",
-				"Float": "",
-				"None": "",
-				"Left": "",
-				"Right": ""
+				"Float": "フロート",
+				"None": "画像無し",
+				"Left": "左寄せ",
+				"Right": "右寄せ"
 			},
 
 			link: {
