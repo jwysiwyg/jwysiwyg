@@ -1285,7 +1285,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				this.editor.css({
 					minHeight: (newY - 6).toString() + "px",
 					// fix for issue 12 ( http://github.com/akzhan/jwysiwyg/issues/issue/12 )
-					width: (newX > 50) ? (newX - 8).toString() + "px" : ""
+					width: (newX > 50) ? newX.toString() + "px" : ""
 				});
 				if ($.browser.msie && parseInt($.browser.version, 10) < 7) {
 					this.editor.css("height", newY.toString() + "px");
@@ -2232,7 +2232,8 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			obj.destroy.apply(that, []);
 			
 			$that.trigger("afterClose", [$dialog]);
-			
+
+			jWysiwyg.ui.focus();
 		};
 
 		if (this.options.open) {
