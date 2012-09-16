@@ -1388,8 +1388,8 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
                     if (range) {
                         offset = {
                             range: range,
-                            parent: range.endContainer.parentNode,
-                            width: (range.startOffset - range.endOffset) || 0
+                            parent: "endContainer" in range ? range.endContainer.parentNode : range.parentElement(),
+                            width: ("startOffset" in range ? (range.startOffset - range.endOffset) : range.boundingWidth) || 0
                         };
                     }
                 }
