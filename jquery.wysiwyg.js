@@ -1424,7 +1424,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
                 self.editorDoc.rememberCommand = false;
 				return true;
 			});
-
+			
 			if (!$.browser.msie) {
 				$(self.editorDoc).keydown(function (event) {
 					var controlName;
@@ -1445,14 +1445,49 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 					}
 					return true;
 				});
-			} else if (self.options.brIE) {
+			} 
+			
+			if (self.options.brIE) {
 				$(self.editorDoc).keydown(function (event) {
 					if (event.keyCode === 13) {
-						var rng = self.getRange();
-						rng.pasteHTML("<br/>");
-						rng.collapse(false);
-						rng.select();
+						
+						if ($.browser.msie || $.browser.opera) {
+							var rng = self.getRange();
+							if (rng) {
+								rng.pasteHTML("<br/>");
+								rng.collapse(false);
+								rng.select();
+							} else {
+								self.insertHtml('<br/>');
+							}						
+						} else {
+							var sel = self.editorDoc.getSelection();
+							if (sel && sel.getRangeAt && sel.rangeCount) {
+								var range = sel.getRangeAt(0);
+								if (!range)
+									return true;
+								range.deleteContents();
 
+								var el = document.createElement("div");
+								el.innerHTML = "<br/>";
+								var frag = document.createDocumentFragment(), node, lastNode;
+								while ( (node = el.firstChild) ) {
+									lastNode = frag.appendChild(node);
+								}
+								range.insertNode(frag);
+
+								// Preserve the selection
+								if (lastNode) {
+									range = range.cloneRange();
+									range.setStartAfter(lastNode);
+									range.collapse(true);
+									sel.removeAllRanges();
+									sel.addRange(range);
+								}
+							} else
+								return true;
+
+						}
 						return false;
 					}
 
@@ -1822,15 +1857,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 		};
 
 		this.wrapInitialContent = function () {
-			var content = this.initialContent,
-				found = content.match(/<\/?p>/gi);
-
-			if (!found) {
-				return "<p>" + content + "</p>";
-			} else {
-				// :TODO: checking/replacing
-			}
-
+			var content = this.initialContent;
 			return content;
 		};
 	}
