@@ -7,10 +7,10 @@
  */
 (function ($) {
 	if (undefined === $.wysiwyg) {
-		throw "lang.ru.js depends on $.wysiwyg";
+		throw "lang.en.js depends on $.wysiwyg";
 	}
 	if (undefined === $.wysiwyg.i18n) {
-		throw "lang.ru.js depends on $.wysiwyg.i18n";
+		throw "lang.en.js depends on $.wysiwyg.i18n";
 	}
 
 	$.wysiwyg.i18n.lang.ru = {
