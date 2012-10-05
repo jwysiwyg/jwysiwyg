@@ -13,7 +13,7 @@
 		throw "lang.en.js depends on $.wysiwyg.i18n";
 	}
 
-	$.wysiwyg.i18n.lang.ru = {
+	$.wysiwyg.i18n.lang.en = {
 		controls: {
 			"Bold": "",
 			"Colorpicker": "",
