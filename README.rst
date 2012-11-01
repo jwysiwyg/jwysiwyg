@@ -132,6 +132,13 @@ To clear the editor at any time::
 
     $('#wysiwyg').wysiwyg('clear');
 
+Focus the Editor
+----------------
+
+To focus on the editor at any time::
+
+    $('#wysiwyg').wysiwyg('focus');
+
 
 Insert an Image
 ---------------

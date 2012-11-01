@@ -1931,6 +1931,18 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			return $(oWysiwyg.editorDoc);
 		},
 
+        focus: function(object) {
+            var oWysiwyg = object.data("wysiwyg");
+
+            if (!oWysiwyg) {
+                return undefined;
+            }
+
+            oWysiwyg.ui.focus();
+
+            return object;
+        },
+
 		getContent: function (object) {
 			// no chains because of return
 			var oWysiwyg = object.data("wysiwyg");
