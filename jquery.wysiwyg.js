@@ -859,18 +859,31 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 					elm,
 					css,
 					el,
-					checkActiveStatus = function (cssProperty, cssValue) {
-						var handler;
+					// need to check multiple properties for the toolbar
+					// if we check one-by-one, a single property match
+					// on toolbar elements that have multiple css properties
+					// will trigger the button as "active"
+					checkActiveStatus = function (cssObject) {
+						// set a count flag for how many matches we've encountered
+						var matches = 0;
 
-						if ("function" === typeof (cssValue)) {
-							handler = cssValue;
-							if (handler(el.css(cssProperty).toString().toLowerCase(), self)) {
-								self.ui.toolbar.find("." + className).addClass("active");
+						// set an iterator to count the number of properties
+						var total = 0;
+
+						$.each(cssObject, function(cssProperty, cssValue) {
+							if ( "function" === typeof cssValue ) {
+								if ( cssValue.apply(self, [el.css(cssProperty).toString().toLowerCase(), self]) ) {
+									matches += 1;
+								}
+							} else {
+								if ( el.css(cssProperty).toString().toLowerCase() === cssValue ) {
+									matches += 1;
+								}
 							}
-						} else {
-							if (el.css(cssProperty).toString().toLowerCase() === cssValue) {
-								self.ui.toolbar.find("." + className).addClass("active");
-							}
+							total += 1;
+						});
+						if ( total === matches ) {
+							self.ui.toolbar.find("." + className).addClass("active");
 						}
 					};
 
@@ -905,7 +918,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 						if (el[0].nodeType !== 1) {
 							break;
 						}
-						$.each(css, checkActiveStatus);
+						checkActiveStatus(css);
 
 						el = el.parent();
 					}
