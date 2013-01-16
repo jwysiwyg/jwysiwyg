@@ -790,7 +790,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 					self.triggerControl.apply(self, [name, control]);
 
 					/**
-					* @link https://github.com/akzhan/jwysiwyg/issues/219
+					* @link https://github.com/jwysiwyg/jwysiwyg/issues/219
 					*/
 					var $target = $(event.target);
 					for (var controlName in self.controls) {
@@ -1213,18 +1213,14 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 
 		this.getInternalSelection = function () {
 			// firefox: document.getSelection is deprecated
-			if (this.editor.get(0).contentWindow) {
-				if (this.editor.get(0).contentWindow.getSelection) {
-					return this.editor.get(0).contentWindow.getSelection();
-				}
-				if (this.editor.get(0).contentWindow.selection) {
-					return this.editor.get(0).contentWindow.selection;
-				}
+			var editorWindow = this.editor.get(0).contentWindow;
+			if (editorWindow && editorWindow.getSelection) {
+				return editorWindow.getSelection();
 			}
-			if (this.editorDoc.getSelection) {
+			else if (this.editorDoc.getSelection) {
 				return this.editorDoc.getSelection();
 			}
-			if (this.editorDoc.selection) {
+			else if (this.editorDoc.selection) {
 				return this.editorDoc.selection;
 			}
 
@@ -1390,29 +1386,6 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			$(self.editorDoc).bind("click.wysiwyg", function (event) {
 				self.ui.checkTargets(event.target ? event.target : event.srcElement);
 			});
-
-            /**
-             * @link https://github.com/akzhan/jwysiwyg/issues/251
-             */
-            setInterval(function () {
-                var offset = null;
-
-                try {
-                    var range = self.getInternalRange();
-                    if (range) {
-                        offset = {
-                            range: range,
-                            parent: "endContainer" in range ? range.endContainer.parentNode : range.parentElement(),
-                            width: ("startOffset" in range ? (range.startOffset - range.endOffset) : range.boundingWidth) || 0
-                        };
-                    }
-                }
-                catch (e) { console.error(e); }
-
-                if (offset && offset.width == 0 && !self.editorDoc.rememberCommand) {
-                    self.ui.checkTargets(offset.parent);
-                }
-            }, 400);
             
 			/**
 			 * @link http://code.google.com/p/jwysiwyg/issues/detail?id=20
@@ -1424,7 +1397,9 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				}
 				self.ui.focus();
 			});
-
+			
+			$($.wysiwyg.quirk.quirks).each(function(i, quirk) { quirk.init(self); });
+			
 			$(self.editorDoc).keydown(function (event) {
 				var emptyContentRegex;
 				if (event.keyCode === 8) { // backspace
@@ -1442,12 +1417,12 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			if (!$.browser.msie) {
 				$(self.editorDoc).keydown(function (event) {
 					var controlName;
-                    			var control;
+					var control;
 
 					/* Meta for Macs. tom@punkave.com */
 					if (event.ctrlKey || event.metaKey) {
 						for (controlName in self.options.controls) {
-                            				control = self.options.controls[controlName];
+							control = self.options.controls[controlName];
 							if (control.hotkey && control.hotkey.ctrl) {
 								if (event.keyCode === control.hotkey.key) {
 									self.triggerControl.apply(self, [controlName, control]);
@@ -2089,6 +2064,21 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				$.wysiwyg[data.name] = data;
 
 				return true;
+			}
+		},
+		
+		quirk: {
+			quirks: [],
+			
+			assert: function(expression, message) {
+				if (!expression) {
+					throw Error(message);
+				}
+			},
+			
+			register: function(quirk) {
+				this.assert(typeof quirk.init === 'function', 'quirk.init must be a function');
+				this.quirks.push(quirk);
 			}
 		},
 
