@@ -526,6 +526,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			resizeOptions: false,
 			rmUnusedControls: false,	// https://github.com/akzhan/jwysiwyg/issues/52
 			rmUnwantedBr: true,			// http://code.google.com/p/jwysiwyg/issues/detail?id=11
+			wrapOrphanText: false,
 			tableFiller: "Lorem ipsum",
 			initialMinHeight: null,
 
@@ -1749,6 +1750,20 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				var content, newContent;
 
 				content = this.getContent();
+				
+				if (this.options.wrapOrphanText) {
+                    // Step 1: Wrap any unwrapped text following a starting tag where the next tag is not the closing tag for that opening tag.
+                    //         Then try saying that three times fast.
+                    content = content.replace(/(<([A-Za-z][a-zA-Z0-9]*)\b[^>]*>)([^<]+?[^\s<]+?[^<]+?)<(?!\/\2)/g, "$1<p>$3</p><");
+                    // Step 2: Wrap any unwrapped text following a closing tag.
+                    content = content.replace(/(<\/([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>)([^<]+?[^\s<]+[^<]+?)/g, "$1<p>$3</p>");
+                    // Step 3: Wrap any unwrapped text at the very start of the document.
+                    content = content.replace(/^([^<]+?[^\s<]+[^<]+?)</, "<p>$1</p><");
+                    // Step 4: Wrap any unwrapped text following self-enclosing tags.
+                    content = content.replace(/\/>([^<]+?[^\s<]+[^<]+)/g, "/><p>$1</p>");
+                    // Step 5: If the document has no tags, wrap that too.
+                    content = content.replace(/^([^<]+)$/, "<p>$1</p>");
+                }
 
 				if (this.options.rmUnwantedBr) {
 					content = content.replace(/<br\/?>$/, "");
