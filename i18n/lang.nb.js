@@ -13,12 +13,12 @@
 		throw "lang.nb.js depends on $.wysiwyg.i18n";
 	}
 
-	$.wysiwyg.i18n.lang.cs = {
+	$.wysiwyg.i18n.lang.nb = {
 		controls: {
 			"Bold": "Fet",
 			"Colorpicker": "Fargevelger",
 			"Copy": "Kopier",
-			"Create link": "Lag lenge",
+			"Create link": "Lag lenke",
 			"Cut": "Klipp ut",
 			"Decrease font size": "Reduser skriftstørrelse",
 			"Fullscreen": "Fullskjerm",

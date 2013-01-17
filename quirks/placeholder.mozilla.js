@@ -35,7 +35,7 @@
 			}
 			else if(this.isRootNode(context, range.startContainer) && range.endOffset === 0) {
 				// Avoid writing directly to root node by jumping to existing block element
-				// Handcles cases where users focus the editor by clicking TAB
+				// Handles cases where users focus the editor by clicking TAB
 				range.selectNodeContents(context.container.firstChild);
 				range.collapse(true);
 			}

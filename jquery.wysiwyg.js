@@ -168,7 +168,7 @@
 			html: {
 				groupIndex: 10,
 				visible: false,
-				exec: function () {
+				exec: function (filter) {
 					var elementHeight;
 
 					if (this.options.resizeOptions && $.fn.resizable) {
@@ -202,7 +202,7 @@
 							}
 						});
 					} else { //wysiwyg is shown
-						this.saveContent();
+						this.saveContent(filter);
 
 						$(this.original).css({
 							width:	this.element.outerWidth() - 6,
@@ -552,6 +552,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 		this.availableControlProperties = [
 			"arguments",
 			"callback",
+			"callbackArguments",
 			"className",
 			"command",
 			"css",
@@ -1173,9 +1174,10 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 					});
 				}
 				return originalText;
-			}
+			},
 		};
-
+		
+		
 		this.getElementByAttributeValue = function (tagName, attributeName, attributeValue) {
 			var i, value, elements = this.editorDoc.getElementsByTagName(tagName);
 
@@ -1740,15 +1742,14 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			this.setContent(this.initialContent);
 		};
 
-		this.saveContent = function () {
-			if (this.viewHTML)
-			{
+		this.saveContent = function (filter) {
+			if (this.viewHTML) {
 				return; // no need
 			}
 			if (this.original) {
 				var content, newContent;
 
-				content = this.getContent();
+				content = (typeof filter === 'function') ? filter(this.getContent()) : this.getContent();
 
 				if (this.options.rmUnwantedBr) {
 					content = content.replace(/<br\/?>$/, "");
@@ -1778,7 +1779,9 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 					content = newContent.html();
 				}
 
-				$(this.original).val(content).change();
+				var event = jQuery.Event('change');
+				event.source = this;
+				$(this.original).val(content).trigger(event);
 
 				if (this.options.events && this.options.events.save) {
 					this.options.events.save.call(this);
@@ -1800,7 +1803,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 				args = control["arguments"] || [];
 
 			if (control.exec) {
-				control.exec.apply(this);  //custom exec function in control, allows DOM changing
+				control.exec.apply(this, control.callbackArguments);  //custom exec function in control, allows DOM changing
 			} else {
 				this.ui.focus();
 				this.ui.withoutCss(); //disable style="" attr inserting in mozzila's designMode
@@ -2071,9 +2074,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 			quirks: [],
 			
 			assert: function(expression, message) {
-				if (!expression) {
-					throw Error(message);
-				}
+				if (!expression) throw Error(message);
 			},
 			
 			register: function(quirk) {
