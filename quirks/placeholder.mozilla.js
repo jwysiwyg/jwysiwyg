@@ -1,4 +1,5 @@
 (function($) {
+	"use strict";
 	$.wysiwyg.quirk.register({
 		defaultBlock: 'p',
 		placeholder: 'br',
@@ -11,7 +12,7 @@
 		init: function(editor) {
 			if ($.browser.mozilla) {
 				var that = this;
-				$(editor.editorDoc).on('input cut paste keyup', function(event) {
+				$(editor.editorDoc).on('input cut paste keyup', function() {
 					var context = {
 						editor: editor,
 						container: editor.editorDoc.body,
@@ -31,7 +32,7 @@
 			
 			if (this.isNotEnclosed(context, range)) {
 				// Avoid empty root node by enclosing range with block element
-				this.enclose(context, range) && range.setStart();
+				this.enclose(context, range);
 			}
 			else if(this.isRootNode(context, range.startContainer) && range.endOffset === 0) {
 				// Avoid writing directly to root node by jumping to existing block element
