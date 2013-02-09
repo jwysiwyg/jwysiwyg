@@ -1053,7 +1053,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 		this.increaseFontSize = function () {
 			if ($.browser.mozilla || $.browser.opera) {
 				this.editorDoc.execCommand("increaseFontSize", false, null);
-			} else if ($.browser.opera) {				
+			} else if ($.browser.webkit) {
 				var Range = this.getInternalRange(),
 					Selection = this.getInternalSelection(),
 					newNode = this.editorDoc.createElement("big");
@@ -1082,7 +1082,7 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 		this.decreaseFontSize = function () {
 			if ($.browser.mozilla || $.browser.opera) {
 				this.editorDoc.execCommand("decreaseFontSize", false, null);
-			} else if ($.browser.opera) {
+			} else if ($.browser.webkit) {
 				var Range = this.getInternalRange(),
 					Selection = this.getInternalSelection(),
 					newNode = this.editorDoc.createElement("small");
