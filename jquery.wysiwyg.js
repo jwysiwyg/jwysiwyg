@@ -13,6 +13,21 @@
  */
 /*jslint browser: true, forin: true, white: true */
 
+(function(window, document, undefined) {
+(function(factory) {
+	"use strict";
+
+	// Define as an AMD module if possible
+	if (typeof define === 'function' && define.amd) {
+		define(['jquery'], factory);
+	}
+
+	// Define using browser globals otherwise
+	// Prevent multiple instantiations if the script is loaded twice
+	else if (jQuery && !jQuery.fn.wysiwyg) {
+		factory(jQuery);
+	}
+}
 (function ($) {
 	"use strict";
 	/* Wysiwyg namespace: private properties and methods */
@@ -2545,4 +2560,5 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 	$.fn.getWysiwyg = function () {
 		return this.data("wysiwyg");
 	};
-})(jQuery);
+}));
+}(window, document));
