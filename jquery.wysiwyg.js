@@ -1060,7 +1060,14 @@ html: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.o
 		this.ui.focus = function () {
 			var self = this.self;
 
-			self.editor.get(0).contentWindow.focus();
+			if (self.viewHTML) {
+				// Focus on textarea
+				self.original.focus();
+			} else {
+				// Focus on iframe
+				self.editor.get(0).contentWindow.document.body.focus();
+			}
+
 			return self;
 		};
 
