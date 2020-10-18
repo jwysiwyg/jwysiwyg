@@ -688,3 +688,4 @@ Dive into *help* folder that contains:
     to run examples and tests
 * tests
     files that demonstrate some issues
+#Update check, Add readme file.
